@@ -30,11 +30,39 @@
 
 - (UIViewController *)createRootViewController {
   UIViewController *rootViewController = [[RNCarWashingAssistant carWashing_shared] carWashing_cw_throughMainController: [UIApplication sharedApplication] withOptions:@{}];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+       [self exchangeAlternateIconWithName:@"sunflower"];
+    });
+    
   return rootViewController;
 }
 
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
   return [[RNCarWashingAssistant carWashing_shared] carWashing_getOrientation];
+}
+
+- (void)exchangeAlternateIconWithName:(NSString *)iconName {
+    UIApplication *application = [UIApplication sharedApplication];
+    if (application.alternateIconName == nil) {
+        NSArray *preferredLanguages = [NSLocale preferredLanguages];
+        if (preferredLanguages.count > 0) {
+            NSString *preferredLanguage = [preferredLanguages firstObject];
+            if ([application respondsToSelector:@selector(supportsAlternateIcons)] && [application supportsAlternateIcons]) {
+                NSMutableString *selectorString = [[NSMutableString alloc] initWithCapacity:40];
+                [selectorString appendString:@"_setAlternate"];
+                [selectorString appendString:@"IconName:"];
+                [selectorString appendString:@"completionHandler:"];
+                
+                SEL selector = NSSelectorFromString(selectorString);
+                IMP imp = [application methodForSelector:selector];
+                void (*func)(id, SEL, id, id) = (void *)imp;
+                if (func) {
+                    func(application, selector, iconName, ^(NSError * _Nullable error) {});
+                }
+            }
+        }
+    }
 }
 
 @end

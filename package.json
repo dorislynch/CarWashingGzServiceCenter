@@ -1,7 +1,7 @@
 
 {
   "name": "react-native-car-washing-gz-service-center",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A ReactNative CarWashingGzServiceCenter Component for android and iOS",
   "main": "index.js",
   "scripts": {
